@@ -40,47 +40,92 @@ Python 3.11.9
 | Wide matrix | 26,968 tracts × 20 health measures |
 | License | U.S. Government Open Data (public domain) |
 
-Raw and processed CSVs are excluded from version control (see `.gitignore`) because of file size. They are fully reproducible from the scripts below.
+Raw and processed CSVs are excluded from version control (see `.gitignore`) because of file size. They are fully reproducible by running the two scripts below.
 
 ---
 
 ## How to Reproduce
 
-This project was built and tested in VS Code 
+### Option A — VS Code / Local
 
-**Step 1 — Install dependencies**
+**Step 1 — Clone the repo and install dependencies**
 ```bash
+git clone https://github.com/Rishabh-Pagaria/data_mininng_and_analysis.git
+cd data_mininng_and_analysis
 pip install -r requirements.txt
 ```
 
-**Step 2 — Download the raw data** 
+**Step 2 — Download the raw data** (~3 min, downloads ~810K rows)
 ```bash
-python scripts/fetch_data.py
+python Scripts/fetch_data.py
 # Output: data/raw/cdc_500cities_raw.csv
 #         data/raw/download_meta.json
 ```
 
 For a quick development subset (first 100K rows):
 ```bash
-python scripts/fetch_data.py --max-rows 100000
+python Scripts/fetch_data.py --max-rows 100000
 ```
 
 **Step 3 — Preprocess and run EDA** (~2 min)
 ```bash
-python scripts/preprocess_eda.py
+python Scripts/preprocess_eda.py
 # Output: data/processed/*.csv   (9 processed artifact files)
 #         assets/eda_*.png        (10 EDA figures)
 ```
 
-**Step 4 — Run the main notebook**
+**Step 4 — Open the main notebook**
 
-Open `main_notebook.ipynb` in Colab or JupyterLab and run all cells top to bottom. No API calls happen in the notebook — it loads from `data/processed/`.
+Open `main_notebook.ipynb` in VS Code or JupyterLab and run all cells top to bottom. No API calls happen in the notebook — it loads everything from `data/processed/`.
+
+---
+
+### Option B — Google Colab
+
+**Step 1 — Clone the repo inside Colab**
+```python
+!git clone https://github.com/Rishabh-Pagaria/data_mininng_and_analysis.git
+%cd data_mininng_and_analysis
+```
+
+**Step 2 — Install dependencies**
+```python
+!pip install -r requirements.txt
+```
+
+**Step 3 — Download the raw data**
+```python
+!python Scripts/fetch_data.py
+```
+
+**Step 4 — Preprocess and run EDA**
+```python
+!python Scripts/preprocess_eda.py
+```
+
+**Step 5 — Open the main notebook**
+
+In Colab, go to `File → Open notebook → Upload` and select `main_notebook.ipynb`. Then run all cells. Since the data was fetched into the cloned folder in your Colab session, the paths will resolve correctly.
+
+> Note: Colab sessions reset when disconnected. If your session restarts, re-run Steps 3 and 4 to regenerate the processed files before running the main notebook.
 
 ---
 
 ## Key Dependencies
 
-See [`requirements.txt`](requirements.txt) for the complete list
+| Package | Version |
+|---|---|
+| Python | 3.11.9 |
+| pandas | 2.x |
+| numpy | 1.x |
+| scikit-learn | 1.x |
+| scipy | 1.x |
+| matplotlib | 3.x |
+| esda | 2.x |
+| libpysal | 4.x |
+| requests | 2.x |
+
+See [`requirements.txt`](requirements.txt) for the complete list with pinned versions.
 
 ---
 
@@ -100,20 +145,19 @@ See [`requirements.txt`](requirements.txt) for the complete list
 .
 ├── main_notebook.ipynb            # Final curated analysis notebook (start here)
 ├── README.md
-├── requirements.txt               # Full environment export
+├── requirements.txt               # Full environment export (Python 3.11.9)
 ├── .gitignore
+├── LICENSE
 │
-├── scripts/
+├── Scripts/
 │   ├── fetch_data.py              # Step 1: downloads raw CDC data → data/raw/
 │   └── preprocess_eda.py          # Step 2: preprocessing + EDA → data/processed/ + assets/
 │
 ├── data/
 │   ├── raw/
-│   │   ├── .gitkeep
 │   │   ├── cdc_500cities_raw.csv  # produced by fetch_data.py (gitignored)
 │   │   └── download_meta.json     # provenance metadata (committed)
-│   └── processed/
-│       ├── .gitkeep
+│   └── processed/                 # produced by preprocess_eda.py (gitignored)
 │       ├── wide_matrix.csv        # tracts × 20 measures (imputed)
 │       ├── wide_scaled.csv        # tracts × 20 measures (StandardScaler)
 │       ├── pca_4d.csv             # tracts × 4 principal components
@@ -124,7 +168,7 @@ See [`requirements.txt`](requirements.txt) for the complete list
 │       ├── missingness_report.csv # per-column missing counts pre-imputation
 │       └── correlation_matrix.csv # 20×20 Pearson correlation matrix
 │
-├── assets/                        # EDA figures (produced by preprocess_eda.py)
+├── assets/                        # EDA figures produced by preprocess_eda.py
 │   ├── eda_01_missingness.png
 │   ├── eda_02_distributions.png
 │   ├── eda_03_correlation_heatmap.png
